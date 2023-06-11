@@ -1,0 +1,84 @@
+Group {
+ name VP_tcl
+ knobChanged "\nnode = nuke.thisNode()\nknob = nuke.thisKnob()\n\nif knob.name() == \"expression_active\":\n    if knob.value() == True:\n        node\['expression'].setEnabled(True)\n        node\['tcl'].setEnabled(False)\n        node\['tcl_active'].setValue(0)\n    else:\n        node\['expression'].setEnabled(False)\n        node\['tcl'].setEnabled(True)\n        node\['tcl_active'].setValue(1)\n\nif knob.name() == \"tcl_active\":\n    if knob.value() == True:\n        node\['expression'].setEnabled(False)\n        node\['tcl'].setEnabled(True)\n        node\['expression_active'].setValue(0)\n    else:\n        node\['expression'].setEnabled(True)\n        node\['tcl'].setEnabled(False)\n        node\['expression_active'].setValue(1)\n"
+ tile_color 0x3d97d0ff
+ addUserKnob {20 Main}
+ addUserKnob {1 expression l Expression: +DISABLED}
+ addUserKnob {6 expression_active l "" -STARTLINE}
+ addUserKnob {43 tcl l TCL:}
+ addUserKnob {6 tcl_active l "" -STARTLINE}
+ tcl_active true
+ addUserKnob {26 version l "" +STARTLINE T "<font color=#2083c4><i><font size=\"2\">VP TCL v1.0</>"}
+ addUserKnob {20 settings l Settings}
+ addUserKnob {7 edges l Edges}
+ edges 0.9
+ addUserKnob {7 font_size l "Font size" -STARTLINE R 1 100}
+ font_size 55
+ addUserKnob {6 turn_off_input l "Turn Off Input:" +STARTLINE}
+ turn_off_input true
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 355
+  ypos -709
+ }
+ Reformat {
+  format "1920 1080 0 0 1920 1080 1 FHD"
+  name Reformat1
+  xpos 355
+  ypos -628
+  disable {{1-parent.turn_off_input}}
+ }
+ Multiply {
+  value {{1-parent.turn_off_input}}
+  name Multiply1
+  xpos 355
+  ypos -590
+ }
+set N84ddbc00 [stack 0]
+ Text {
+  message "\[\nset var1 \[value parent.expression]\nif \{\$var1 == \{\}\} \{\} \{expression \[value parent.expression]\}\n]"
+  font C:/Windows/Fonts/arial.ttf
+  size {{parent.font_size}}
+  yjustify top
+  Transform 1
+  box {{format.w-r} {format.h-format.h*parent.edges} {format.w*parent.edges} {format.h*parent.edges}}
+  center {1024 429}
+  name EXPRESSION
+  xpos 291
+  ypos -479
+ }
+push $N84ddbc00
+ Text {
+  message "\[value parent.tcl]"
+  font C:/Windows/Fonts/arial.ttf
+  size {{parent.font_size}}
+  yjustify top
+  Transform 1
+  box {{format.w-r} {format.h-format.h*parent.edges} {format.w*parent.edges} {format.h*parent.edges}}
+  center {1024 429}
+  name TCL
+  xpos 424
+  ypos -479
+ }
+ Dissolve {
+  inputs 2
+  which {{parent.expression_active}}
+  name Dissolve1
+  label "\[value which]"
+  xpos 359
+  ypos -389
+ }
+ Crop {
+  box {0 0 {format.w} {format.h}}
+  name Crop
+  xpos 359
+  ypos -333
+ }
+ Output {
+  name Output1
+  xpos 359
+  ypos -279
+ }
+end_group

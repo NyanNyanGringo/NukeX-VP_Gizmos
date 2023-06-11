@@ -1,0 +1,308 @@
+Group {
+ inputs 0
+ name VP_clock
+ tile_color 0x3d97d0ff
+ label "Reverse: True"
+ addUserKnob {20 time}
+ addUserKnob {4 mode M {HH:MM:SS:TT HH:MM:SS HH:MM ""}}
+ mode HH:MM:SS
+ addUserKnob {3 h}
+ addUserKnob {3 m -STARTLINE}
+ addUserKnob {3 s -STARTLINE}
+ addUserKnob {3 t -STARTLINE}
+ addUserKnob {22 calculate -STARTLINE T "cur_node = nuke.thisNode()\nf = ( nuke.frame() - nuke.Root().firstFrame() ) / cur_node.knob('fps').value()\n\nh = cur_node.knob('h').value() * 3600\nm = cur_node.knob('m').value() * 60\ns = cur_node.knob('s').value()\nt = cur_node.knob('t').value() / 60\n\ncur_node.knob('offset').setValue(h+m+s+t-f)\n\nnuke.toNode('Reverse').knob('disable').setValue(1)\ncur_node.knob('label').setValue('Reverse: False')\n\n"}
+ addUserKnob {22 reverse l "calculate + reverse" -STARTLINE T "node = nuke.toNode('Reverse')\ncur_node = nuke.thisNode()\nframe = nuke.frame()\n\ncur_node.knob('calculate').execute()\n\nnode.knob('first_frame').setExpression('(frame * -1) +' + str(frame) + '* 2')\n\nnode.knob('disable').setValue(0)\ncur_node.knob('label').setValue('Reverse: True')\n\n\n\n\n# frame*-1 + \[value root.first_frame]*2\n#'(frame * -1) +' + str(frame) + '* 2'\n# (frame * -1) + x*2"}
+ addUserKnob {7 offset_multiplier +INVISIBLE}
+ offset_multiplier {{offset*fps}}
+ addUserKnob {26 author l "" +STARTLINE T "<font color=#2083c4><i><font size=\"2\">VP_clock v2.16</>"}
+ addUserKnob {20 text}
+ addUserKnob {7 text_scale}
+ text_scale 1
+ addUserKnob {7 text_offset R 0 2}
+ text_offset 1
+ addUserKnob {7 text_kerning}
+ addUserKnob {26 ""}
+ addUserKnob {7 text_dots}
+ text_dots 1
+ addUserKnob {26 ""}
+ addUserKnob {2 font}
+ font "\[python nuke.defaultFontPathname()]"
+ addUserKnob {20 settings}
+ addUserKnob {7 offset R 0 86400}
+ addUserKnob {3 fps}
+ fps {{"\[value root.fps]"}}
+}
+ Reformat {
+  inputs 0
+  format "1920 1080 0 0 1920 1080 1 HD_1080"
+  box_width 1920
+  box_height 1080
+  box_fixed true
+  name Reformat1
+  label "filter: \[value filter]"
+  xpos 519
+  ypos -311
+ }
+ Dot {
+  name Dot7
+  xpos 552
+  ypos -221
+ }
+set N3fab6000 [stack 0]
+ Dot {
+  name Dot8
+  xpos 693
+  ypos -221
+ }
+set N3fab6400 [stack 0]
+ Dot {
+  name Dot9
+  xpos 832
+  ypos -221
+ }
+set N3fab6800 [stack 0]
+ Dot {
+  name Dot6
+  xpos 975
+  ypos -221
+ }
+set N3fab6c00 [stack 0]
+ Dot {
+  name Dot13
+  xpos 1113
+  ypos -221
+ }
+ Text {
+  cliptype none
+  message :
+  font "\[value group.font]"
+  size 275
+  xjustify center
+  yjustify center
+  Transform 1
+  box {0 0 1920 1080}
+  translate {{parent.hours4.translate*.66666666666} 0}
+  scale {{parent.text_scale}}
+  center {{"960 + translate.x*-1 - transform_hhmmss.translate.x - transform_hhmm.translate.x"} {"540 + translate.y*-1"}}
+  name dot4A
+  xpos 1080
+  ypos -174
+ }
+ Text {
+  cliptype none
+  message :
+  font "\[value group.font]"
+  size 275
+  xjustify center
+  yjustify center
+  Transform 1
+  box {0 0 1920 1080}
+  scale {{parent.text_scale}}
+  center {{"960 + translate.x*-1 - transform_hhmmss.translate.x - transform_hhmm.translate.x"} {"540 + translate.y*-1"}}
+  name dot4B
+  xpos 1080
+  ypos -148
+  disable {{"mode == 2"}}
+ }
+ Text {
+  cliptype none
+  message :
+  font "\[value group.font]"
+  size 275
+  xjustify center
+  yjustify center
+  Transform 1
+  box {0 0 1920 1080}
+  translate {{parent.hours4.translate*-.66666666666} 0}
+  scale {{parent.text_scale}}
+  center {{"960 + translate.x*-1"} {"540 + translate.y*-1"}}
+  name dot4C
+  xpos 1080
+  ypos -122
+  disable {{"mode != 0" x1 1}}
+ }
+ Dot {
+  name Dot14
+  xpos 1113
+  ypos 156
+ }
+push $N3fab6c00
+ Text {
+  cliptype none
+  message "\[format %02d \[value counter.tenth]]"
+  font "\[value group.font]"
+  size 275
+  kerning {{parent.text_kerning}}
+  xjustify center
+  yjustify center
+  Transform 1
+  box {0 0 1920 1080}
+  translate {{(parent.hours4.translate)*-1} 0}
+  scale {{parent.text_scale}}
+  center {{"(960 + translate.x * -1) - transform_hhmmss.translate.x"} {"540 + translate.y*-1"}}
+  name tenth4
+  xpos 942
+  ypos -174
+ }
+ Dot {
+  name Dot12
+  xpos 975
+  ypos 118
+ }
+push $N3fab6800
+ Text {
+  cliptype none
+  message "\[format %02d \[value counter.sec]]"
+  font "\[value group.font]"
+  size 275
+  kerning {{parent.text_kerning}}
+  xjustify center
+  yjustify center
+  Transform 1
+  box {{parent.hours4.box} {parent.hours4.box} {parent.hours4.box} {parent.hours4.box}}
+  translate {{(parent.hours4.translate)*0.333333333*-1} 0}
+  scale {{parent.text_scale}}
+  center {{"(960 + translate.x * -1) - transform_hhmmss.translate.x"} {"540 + translate.y*-1"}}
+  name seconds4
+  xpos 799
+  ypos -174
+ }
+ Dot {
+  name Dot11
+  xpos 832
+  ypos 80
+ }
+push $N3fab6400
+ Text {
+  cliptype none
+  message "\[format %02d \[value counter.min]]"
+  font "\[value group.font]"
+  size 275
+  kerning {{parent.text_kerning}}
+  xjustify center
+  yjustify center
+  Transform 1
+  box {{parent.hours4.box} {parent.hours4.box} {parent.hours4.box} {parent.hours4.box}}
+  translate {{(parent.hours4.translate)*0.333333333} 0}
+  scale {{parent.text_scale}}
+  center {{"(960 + translate.x * -1) - transform_hhmmss.translate.x - transform_hhmm.translate.x"} {"540 + translate.y*-1"}}
+  name minutes4
+  xpos 660
+  ypos -173
+ }
+ Dot {
+  name Dot10
+  xpos 693
+  ypos 42
+ }
+push $N3fab6000
+ Text {
+  cliptype none
+  message "\[format %02d \[value counter.hours]]"
+  font "\[value group.font]"
+  size 275
+  kerning {{parent.text_kerning}}
+  xjustify center
+  yjustify center
+  Transform 1
+  box {0 0 1920 1080}
+  translate {{-570*text_offset} 0}
+  scale {{parent.text_scale}}
+  center {{"960 + translate.x * -1 - transform_hhmmss.translate.x - transform_hhmm.translate.x"} {"540 + translate.y*-1"}}
+  name hours4
+  xpos 519
+  ypos -170
+ }
+ Merge2 {
+  inputs 2
+  name merge_min
+  label "Mix \[value mix]"
+  xpos 519
+  ypos 33
+ }
+ Merge2 {
+  inputs 2
+  name merge_sec
+  label "Mix \[value mix]"
+  xpos 519
+  ypos 71
+  disable {{"mode >= 2"}}
+ }
+ Merge2 {
+  inputs 2
+  name merge_tenth
+  label "Mix \[value mix]"
+  xpos 519
+  ypos 109
+  disable {{"mode >= 1"}}
+ }
+ Merge2 {
+  inputs 2
+  mix {{parent.text_dots}}
+  name merge_dots
+  label "Mix \[value mix]"
+  xpos 519
+  ypos 147
+ }
+ Transform {
+  translate {{"disable == 0 ? 185*text_offset : 0"} 0}
+  center {960 540}
+  name transform_hhmmss
+  label "filter: \[value filter]"
+  xpos 519
+  ypos 228
+  disable {{"mode != 1" x1 1}}
+ }
+ Transform {
+  translate {{"disable == 0 ? 380 * text_offset : 0"} 0}
+  center {960 540}
+  name transform_hhmm
+  label "filter: \[value filter]"
+  xpos 519
+  ypos 266
+  disable {{"mode <= 1"}}
+ }
+ FrameHold {
+  firstFrame {{"(frame * -1) +1001* 2"}}
+  name Reverse
+  xpos 519
+  ypos 354
+ }
+ Crop {
+  box {0 0 1920 1080}
+  name Crop1
+  xpos 519
+  ypos 434
+ }
+ Output {
+  name Output1
+  xpos 519
+  ypos 504
+ }
+ Group {
+  inputs 0
+  name counter
+  xpos 661
+  ypos -309
+  addUserKnob {20 User}
+  addUserKnob {7 fps R 0 60}
+  fps {{parent.fps}}
+  addUserKnob {7 offset}
+  offset {{"(parent.offset_multiplier*-1) - (\[value root.first_frame]*-1)"}}
+  addUserKnob {7 tenth R 0 60}
+  tenth {{"\[python str(int((nuke.frame()\\ -\\ nuke.thisNode()\\\['offset'\\].value())\\ %\\ nuke.thisNode().knob('fps').value()\\ *\\ 60\\ /\\ nuke.thisNode().knob('fps').value())).zfill(2)]"}}
+  addUserKnob {7 sec R 0 60}
+  sec {{"\[python str(int((nuke.frame()\\ -\\ nuke.thisNode()\\\['offset'\\].value())\\ /\\ (nuke.thisNode().knob('fps').value())\\ %\\ 60)).zfill(2)]"}}
+  addUserKnob {7 min R 0 60}
+  min {{"\[python str(int(((nuke.frame()\\ -\\ nuke.thisNode()\\\['offset'\\].value())\\ /\\ (nuke.thisNode().knob('fps').value())\\ /\\ 60)%60)).zfill(2)]"}}
+  addUserKnob {7 hours R 0 60}
+  hours {{"\[python str(int(((nuke.frame()\\ -\\ nuke.thisNode()\\\['offset'\\].value())\\ /\\ (nuke.thisNode().knob('fps').value())\\ /\\ 60\\ /\\ 60))%24).zfill(2)]"}}
+ }
+  Output {
+   inputs 0
+   name Output1
+   xpos 519
+   ypos -539
+  }
+ end_group
+end_group
