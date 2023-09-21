@@ -1,0 +1,35 @@
+Group {
+ name VP_clean_plate_by_stab
+ knobChanged "node = nuke.thisNode()\nknob = nuke.thisKnob()\n\n\nif knob.name() == \"steps\":\n    if knob.value() <= 0:\n        knob.setValue(1)\n        "
+ tile_color 0x3d97d0ff
+ addUserKnob {20 User}
+ addUserKnob {26 clean_plate l "<font color=grey>clean plate"}
+ addUserKnob {22 generate l Generate T "nuke.thisNode()\[\"generate_function\"].execute()\nstart_generating_clean_plate()" +STARTLINE}
+ addUserKnob {22 generate_invert l "Generate (Invert)" -STARTLINE T "nuke.thisNode()\[\"generate_function\"].execute()\nstart_generating_clean_plate(invert=True)"}
+ addUserKnob {26 _1 l " " T " "}
+ addUserKnob {26 settings l "<font color=grey>settings"}
+ addUserKnob {3 steps l Steps:}
+ steps 1
+ addUserKnob {3 first_frame l "First Frame:" -STARTLINE}
+ first_frame 1127
+ addUserKnob {3 last_frame l "Last Frame:" -STARTLINE}
+ last_frame 1172
+ addUserKnob {3 edge_blur -STARTLINE}
+ addUserKnob {22 generate_function l "Generate Clean Plate" +INVISIBLE T "\"\"\"\n\"\"\"\n\n\ndef start_generating_clean_plate(invert=False):\n    # restore to default\n    \[nuke.delete(node) for node in nuke.allNodes()]\n    input = nuke.nodes.Input()\n    input.setName(\"InputStabilized\")\n    output = nuke.nodes.Output()\n    reformat = nuke.nodes.Reformat()\n    \n    output.setInput(0, reformat)\n    \n    reformat\[\"type\"].setValue(\"to box\")\n    reformat\[\"box_fixed\"].setValue(True)\n    reformat\[\"box_width\"].setExpression(\"width+((width*parent.overview/100)*2)\")\n    reformat\[\"box_height\"].setExpression(\"height+((height*parent.overview/100)*2)\")\n    reformat\[\"resize\"].setValue(\"none\")\n    reformat\[\"disable\"].setExpression(\"parent.overview == 0\")\n    \n    \n    step = int(nuke.thisNode()\[\"steps\"].value())\n    first_frame = int(nuke.thisNode()\[\"first_frame\"].value())\n    last_frame = int(nuke.thisNode()\[\"last_frame\"].value())\n    \n    \n    dot_input = input\n    merge_input_0 = None\n    \n    \n    for frame in range(first_frame, last_frame, step):\n        \n        dot = nuke.nodes.Dot()\n        dot.setInput(0, dot_input)\n        \n        frame_hold = nuke.nodes.FrameHold()\n        frame_hold.setInput(0, dot)\n        frame_hold\[\"firstFrame\"].setValue(frame)\n        \n        edge_blur = nuke.nodes.EdgeBlur()\n        edge_blur.setInput(0, frame_hold)\n        edge_blur\[\"size\"].setExpression(\"\[value parent.edge_blur]\")\n        \n        if frame == first_frame:\n            merge_input_0 = edge_blur\n            \n        else:\n            merge = nuke.nodes.Merge2()\n            merge.setInput(invert-0, merge_input_0)\n            merge.setInput(1-invert, edge_blur)\n            \n            merge_input_0 = merge\n            \n            reformat.setInput(0, merge)\n        \n        dot_input = dot\n    " +STARTLINE}
+ addUserKnob {7 overview l "Over View:" R 0 100}
+ overview 100
+ addUserKnob {26 _2 l " " T " "}
+ addUserKnob {26 author l "" +STARTLINE T "<font color=#2083c4><i><font size=\"2\">VP Clean Plate By Stabilize v1.1</>"}
+}
+ Input {
+  inputs 0
+  name Stabilize
+  xpos 510
+  ypos 1064
+ }
+ Output {
+  name Output1
+  xpos 510
+  ypos 1161
+ }
+end_group
